@@ -2,6 +2,8 @@
 """
 Module size me please
 """
+
+
 def matrix_shape(matrix):
     """
     :param matrix: calculate the shape of the matrix
@@ -13,5 +15,5 @@ def matrix_shape(matrix):
         new_l.append(len(block))
         block = block[0]
         if not isinstance(block, list):
-            break;
+            break
     return new_l
