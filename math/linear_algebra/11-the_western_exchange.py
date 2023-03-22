@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Module the western_exchange\math"""
+"""Module the western_exchange/math"""
 
 
 def np_transpose(matrix):
