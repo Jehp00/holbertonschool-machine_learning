@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 """Module ill use my scale"""
-import numpy
-
 
 def np_shape(matrix):
     """
