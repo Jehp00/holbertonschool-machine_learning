@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
+"""Module scatter"""
+
+
 import numpy as np
 import matplotlib.pyplot as plt
+
 
 mean = [69, 0]
 cov = [[15, 8], [8, 15]]
