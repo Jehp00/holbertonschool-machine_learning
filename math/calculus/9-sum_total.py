@@ -5,8 +5,7 @@
 def summation_i_squared(n):
     """n: limit number of the sum
        return: The sum over each number of thee sigma sum"""
-    num = 0
-    for i in range(n + 1):
-        num += i**2
-    return num
+    if not isinstance(n, int) and not isinstance(n, float):
+        return None;
+    return int(n * (n + 1) * (2 * n + 1) / 6);
 
