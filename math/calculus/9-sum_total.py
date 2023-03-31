@@ -5,6 +5,6 @@
 def summation_i_squared(n):
     """This function calculates the sum of the numbers squared
     until n"""
-    if not isinstance(n, int) or not isinstance(n, float):
-        return None
-    return int((n * (n + 1) * (2 * n + 1)) / 6)
+    if isinstance(n, int) or isinstance(n, float):
+        return int((n * (n + 1) * (2 * n + 1)) / 6)
+    return None
