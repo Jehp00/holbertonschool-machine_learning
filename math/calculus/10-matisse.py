@@ -8,7 +8,7 @@ def poly_derivative(poly):
     return: new list of coefficients
     """
     if not isinstance(poly, list):
-        return None;
+        return None
     if len(poly) == 1:
-        return None;
+        return [0]
     return [(index + 1) * elem for index, elem in enumerate(poly[1:])]
