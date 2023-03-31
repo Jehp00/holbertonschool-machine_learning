@@ -10,5 +10,5 @@ def poly_derivative(poly):
     if not isinstance(poly, list):
         return None;
     if len(poly) == 1:
-        return [0]
+        return None;
     return [(index + 1) * elem for index, elem in enumerate(poly[1:])]
