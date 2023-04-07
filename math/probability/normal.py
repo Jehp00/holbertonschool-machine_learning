@@ -17,7 +17,8 @@ class Normal:
             if len(data) < 2:
                 raise ValueError("data must contain multiple values")
             self.mean = float(sum(data) / len(data))
-            self.stddev = (sum((x - (sum(data) / len(data))) ** 2 for x in data) / len(data))**0.5
+            self.stddev = (sum((x - (sum(data) / len(data))) **
+                           2 for x in data) / len(data))**0.5
 
     def z_score(self, x):
         """
