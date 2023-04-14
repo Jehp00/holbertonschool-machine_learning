@@ -48,6 +48,6 @@ class Neuron:
         :param A: output of the neuron for each example
         :return: the cost
         """
-        lo = Y * np.log(A) + (1 - Y) * np.log(1.0000001- A)
+        lo = Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A)
         cost = -(np.sum(lo) / lo.shape[1])
         return cost
