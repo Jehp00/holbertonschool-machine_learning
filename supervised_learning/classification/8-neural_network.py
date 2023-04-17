@@ -3,6 +3,7 @@
 
 import numpy as np
 
+
 class NeuralNetwork:
     """
         neural network with one hidden layer
