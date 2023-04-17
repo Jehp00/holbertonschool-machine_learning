@@ -59,6 +59,6 @@ class DeepNeuralNetwork:
 
     def cost(self, Y, A):
         """Cost of the model using nn"""
-        lo = Y * np.log(A) + (1 - Y) * np.log(1.000001 - A)
+        lo = Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A)
         cost = -(np.sum(lo) / lo.shape[1])
         return cost
