@@ -23,12 +23,12 @@ class DeepNeuralNetwork:
 
         for i in range(len(layers)):
             if i == 0:
-                self.weights['W1'] = np.random.randn(
+                self.__weights['W1'] = np.random.randn(
                     layers[i], nx) * np.sqrt(2 / nx)
             else:
-                self.weights["W" + str(i + 1)] = np.random.randn(
+                self.__weights["W" + str(i + 1)] = np.random.randn(
                     layers[i], layers[i - 1]) * np.sqrt(2 / layers[i - 1])
-            self.weights["b" + str(i + 1)] = np.zeros((layers[i], 1))
+            self.__weights["b" + str(i + 1)] = np.zeros((layers[i], 1))
 
     @property
     def L(self):
@@ -43,10 +43,12 @@ class DeepNeuralNetwork:
         return self.__weights
 
     def forward_prop(self, X):
-        """Calculates the forward propagation if the nn"""
+        """This function Calculates the forward propagation
+        of the neural network"""
+
         self.__cache['A0'] = X
 
-        for i in range(self.__L):
+        for i in range(self.L):
             W = self.weights['W' + str(i + 1)]
             A = self.cache['A' + str(i)]
             B = self.weights['b' + str(i + 1)]
@@ -58,24 +60,24 @@ class DeepNeuralNetwork:
         return self.cache['A' + str(i + 1)], self.cache
 
     def cost(self, Y, A):
-        """Cost of the model using nn"""
-        lo = Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A)
-        cost = -(np.sum(lo) / lo.shape[1])
+        """Calculates the cost of the model using neural network"""
+        loss = Y * np.log(A) + (1 - Y) * np.log(1.0000001 - A)
+        cost = -(np.sum(loss) / loss.shape[1])
         return cost
 
     def evaluate(self, X, Y):
-        """Evaluate the predictions"""
+        """Evaluates the neural network’s predictions"""
         A = np.where(self.forward_prop(X)[0] < 0.5, 0, 1)
         return A, self.cost(Y, self.forward_prop(X)[0])
 
-    def gradient_descent(self, Y, cache, alpha):
-        """Calculates one pass of the gradiant descent on the neural network"""
+    def gradient_descent(self, Y, cache, alpha=0.05):
+        """Calculates one pass of gradient descent on the neural network"""
         deltas = {}
         weights = self.__weights.copy()
         nl = self.L
         deltas['DZ' + str(nl)] = cache['A' + str(nl)] - Y
         m = Y.shape[1]
-        DW = (1 / m) * np.dot(deltas['DZ' + str(nl)], cache['A' + str(nl - 1)].T)
+        DW = (1 / m) * np.dot(deltas['DZ'+str(nl)], cache['A'+str(nl - 1)].T)
         DB = (1 / m) * np.sum(deltas['DZ' + str(nl)], axis=1, keepdims=True)
 
         W = 'W' + str(nl)
@@ -84,6 +86,7 @@ class DeepNeuralNetwork:
         self.__weights[B] = weights[B] - alpha * DB
 
         for i in reversed(range(1, nl)):
+
             W = weights['W' + str(i + 1)]
             DZ = deltas['DZ' + str(i + 1)]
 
