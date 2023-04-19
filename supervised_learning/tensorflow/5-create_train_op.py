@@ -1,4 +1,3 @@
-
 # !/usr/bin/env python3
 """This module contains the function create_train_op"""
 import tensorflow as tf
