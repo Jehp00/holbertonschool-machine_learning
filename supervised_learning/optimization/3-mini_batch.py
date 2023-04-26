@@ -53,9 +53,9 @@ def train_mini_batch(X_train, Y_train, X_valid, Y_valid, batch_size=32, epochs=5
         y = tf.get_collection('y')[0]
         accuracy = tf.get_collection('accuracy')[0]
         loss = tf.get_collection('loss')[0]
-        train_op = tf.collection('train_op')[0]
+        train_op = tf.get_collection('train_op')[0]
 
-        for epoch in range(epochs+1):
+        for epoch in range(epochs + 1):
             print("After {} epochs:".format(epoch))
             train_cost = sess.run(loss, feed_dict={x: X_train,
                                                    y: Y_train})
@@ -69,31 +69,33 @@ def train_mini_batch(X_train, Y_train, X_valid, Y_valid, batch_size=32, epochs=5
             valid_accuracy = sess.run(accuracy, feed_dict={x: X_valid,
                                                            y: Y_valid})
             print("\tValidation Accuracy: {}".format(valid_accuracy))
-
             if epoch == epochs:
                 break
-
             X_train_s, Y_train_s = shuffle_data(X_train, Y_train)
-
             if (m % batch_size) is 0:
                 mini_batch_total = m // batch_size
             else:
                 mini_batch_total = (m // batch_size) + 1
 
-            step_num = 0
+            step_number = 0
             for mini_batch in range(mini_batch_total):
                 low = mini_batch * batch_size
                 high = ((mini_batch + 1) * batch_size)
                 if high > m:
                     high = m
-
-                sess.run(train_op, feed_dict={x: X_train[low:high, :],
-                                              y: Y_train[low:high, :]})
-                step_num += 1
-                if (step_num % 100) is 0:
-                    print('\tStep {}:'.format(step_num))
+                sess.run(train_op, feed_dict={x: X_train_s[low:high, :],
+                                              y: Y_train_s[low:high, :]})
+                step_number += 1
+                if (step_number % 100) is 0:
+                    print("\tStep {}:".format(step_number))
+                    step_cost = sess.run(
+                        loss,
+                        feed_dict={x: X_train_s[low:high, :],
+                                   y: Y_train_s[low:high, :]})
+                    print("\t\tCost: {}".format(step_cost))
                     step_accuracy = sess.run(
-                        accuracy, feed_dict={x: X_train_s[low:high, :],
-                                             y: Y_train_s[low:high, :]})
+                        accuracy,
+                        feed_dict={x: X_train_s[low:high, :],
+                                   y: Y_train_s[low:high, :]})
                     print("\t\tAccuracy: {}".format(step_accuracy))
-    return (saver.save(sess, save_path))
+        return (saver.save(sess, save_path))
