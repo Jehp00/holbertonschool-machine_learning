@@ -19,7 +19,7 @@ def batch_norm(Z, gamma, beta, epsilon):
     mean = Z.mean(axis=0)
     variance = Z.var(axis=0)
     std = np.sqrt(variance + epsilon)
-    Z_centered = Z -mean
+    Z_centered = Z - mean
     Z_normalize = Z_centered / std
     Z_batch_norm = gamma * Z_normalize + beta
 
