@@ -15,5 +15,5 @@ def precision(confusion):
             if r == c:
                 correct += confusion[r][c]
             totally += confusion[r][c]
-        precision.append(confusion / totally)
+        precision.append(correct / totally)
     return np.asarray(precision)
