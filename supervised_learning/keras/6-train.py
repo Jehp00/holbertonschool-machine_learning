@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """This module contains the function train_model"""
 import tensorflow.keras as K
 
