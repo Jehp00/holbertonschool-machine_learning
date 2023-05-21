@@ -9,7 +9,6 @@ def conv_forward(A_prev, W, b, activation, padding="same", stride=(1, 1)):
     m = A_prev.shape[0]
     h_prev = A_prev.shape[1]
     w_prev = A_prev.shape[2]
-    c_prev = A_prev.shape[3]
 
     kh = W.shape[0]
     kw = W.shape[1]
@@ -40,9 +39,9 @@ def conv_forward(A_prev, W, b, activation, padding="same", stride=(1, 1)):
         for y in range(output_w):
             for k in range(c_new):
                 output[examples,
-                x,
-                y, k] = np.sum(output_pad[examples,
-                               (x * sh):(x * sh) + kh,
+                       x,
+                       y, k] = np.sum(output_pad[examples,
+                                      (x * sh):(x * sh) + kh,
                                (y * sw):(y * sw) + kw]
                                * W[:, :, :, k],
                                axis=(1, 2, 3))
