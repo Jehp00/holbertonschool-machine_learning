@@ -13,7 +13,7 @@ def conv_forward(A_prev, W, b, activation, padding="same", stride=(1, 1)):
 
     kh = W.shape[0]
     kw = W.shape[1]
-    c_new = W.shape[2]
+    c_new = W.shape[3]
 
     pad_h = 0
     pad_w = 0
@@ -25,27 +25,28 @@ def conv_forward(A_prev, W, b, activation, padding="same", stride=(1, 1)):
         pad_h = ((((h_prev - 1) * sh) + kh - h_prev) // 2)
         pad_w = ((((w_prev - 1) * sw) + kw - w_prev) // 2)
 
-    opt_h = int((h_prev + (2 * pad_h) - kh) / sh + 1)
-    opt_w = int((w_prev + (2 * pad_w) - kw) / sw + 1)
+    output_h = int((h_prev + (2 * pad_h) - kh) / sh + 1)
+    output_w = int((w_prev + (2 * pad_w) - kw) / sw + 1)
 
-    opt = np.zeros((m, opt_h, opt_w, c_new))
+    output = np.zeros((m, output_h, output_w, c_new))
 
-    cases = np.arange(m)
+    examples = np.arange(m)
 
-    opt_pad = np.pad(A_prev, pad_width=((0, 0), (pad_h, pad_h),
-                                        (pad_w, pad_w), (0, 0)),
-                     mode='constant')
+    output_pad = np.pad(A_prev, pad_width=((0, 0), (pad_h, pad_h),
+                                           (pad_w, pad_w), (0, 0)),
+                        mode='constant')
 
-    for x in range(opt_h):
-        for y in range(opt_w):
+    for x in range(output_h):
+        for y in range(output_w):
             for k in range(c_new):
-                opt[cases,
-                    x,
-                    y, k] = np.sum(opt_pad[cases,
-                                           (x * sh):(x * sh) + kh,
-                                           (y * sw):(y * sw) + kw]
-                                   * W[:, :, :, k],
-                                   axis=(1, 2, 3))
-    active = activation(opt + b)
+                output[examples,
+                x,
+                y, k] = np.sum(output_pad[examples,
+                               (x * sh):(x * sh) + kh,
+                               (y * sw):(y * sw) + kw]
+                               * W[:, :, :, k],
+                               axis=(1, 2, 3))
 
-    return active
+    activation = activation(output + b)
+
+    return activation
