@@ -7,7 +7,7 @@ def lenet5(X):
     """
     builds a modified version of the LeNet-5 architecture using keras
     """
-    initializer = K.initializer.he_normal()
+    initializer = K.initializers.he_normal()
 
     C1 = K.layers.Conv2D(filters=6,
                          kernel_size=(5, 5),
