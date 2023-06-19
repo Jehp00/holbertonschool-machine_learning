@@ -10,12 +10,12 @@ class Yolo():
         """
         :param model_path: the path to where a Darknet Keras model is stored
         :param classes_path: the path to where the list of class names used for
-                      the Darknet model, listed in order of index, can be found
-        :param class_t: a float representing the box score threshold for the initial
-                 filtering step
-        :param nms_t: a float representing the IOU threshold for non-max suppression
-        :param anchors: a numpy.ndarray of shape (outputs, anchor_boxes, 2) containing
-                 all of the anchor boxes:
+        the Darknet model, listed in order of index, can be found
+        :param class_t: a float representing the box score
+        threshold for the initial filtering step
+        :param nms_t: a float representing the IOU threshold
+        for non-max suppression
+        :param anchors: a numpy.ndarray of shape containing the anchor boxes:
             outputs: the number of outputs (predictions) made by the Darknet
                      model
             anchor_boxes: the number of anchor boxes used for each prediction
