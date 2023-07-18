@@ -36,13 +36,10 @@ def BIC(X, kmin=1, kmax=None, iterations=1000, tol=1e-5, verbose=False):
         best_res.append((pi, m, S))
         logl_val.append(log_l)
 
-        # Formula pf paramaters: https://bit.ly/33Cw8lH
-        # code based on gaussian mixture source code n_parameters source code
         cov_params = k * d * (d + 1) / 2.
         mean_params = k * d
         p = int(cov_params + mean_params + k - 1)
 
-        # Formula for this task BIC = p * ln(n) - 2 * l
         bic = p * np.log(n) - 2 * log_l
         bic_val.append(bic)
 
