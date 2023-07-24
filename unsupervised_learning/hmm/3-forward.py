@@ -26,4 +26,4 @@ def forward(Observation, Emission, Transition, Initial):
         P = np.sum(F[:, -1])
         return P, F
     except Exception:
-        None, None
+        return None, None
