@@ -15,59 +15,43 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
                      representation
     Returns: encoder, decoder, auto
     """
-    if type(input_dims) is not int:
-        raise TypeError(
-            "input_dims must be an int containing dimensions of model input")
-    if type(hidden_layers) is not list:
-        raise TypeError("hidden_layers must be a list of ints \
-            representing number of nodes for each layer")
-    for nodes in hidden_layers:
-        if type(nodes) is not int:
-            raise TypeError("hidden_layers must be a list of ints \
-                representing number of nodes for each layer")
-    if type(latent_dims) is not int:
-        raise TypeError("latent_dims must be an int containing dimensions of \
-            latent space representation")
+    def sampling(args):
+        """Sampling"""
+        z_mean, z_log_sigma = args
+        batch = keras.backend.shape(z_mean)[0]
+        dim = keras.backend.int_shape(z_mean)[1]
+        epsilon = keras.backend.random_normal(shape=(batch, dim))
+        return z_mean + keras.backend.exp(z_log_sigma / 2) * epsilon
 
-        # encoder
-    encoder_inputs = keras.Input(shape=(input_dims,))
-    encoder_value = encoder_inputs
-    for i in range(len(hidden_layers)):
-        encoder_layer = keras.layers.Conv2D(hidden_layers[i],
-                                            activation='relu',
-                                            kernel_size=(3, 3),
-                                            padding='same')
-        encoder_value = encoder_layer(encoder_value)
-        encoder_batch_norm = keras.layers.BatchNormalization()
-        encoder_value = encoder_batch_norm(encoder_value)
-    encoder_flatten = keras.layers.Flatten()
-    encoder_value = encoder_flatten(encoder_value)
-    encoder_dense = keras.layers.Dense(activation='relu')
-    encoder_value = encoder_dense(encoder_value)
-    encoder_batch_norm = keras.layers.BatchNormalization()
-    encoder_value = encoder_batch_norm(encoder_value)
+    def kl_reconstruction_loss(true, pred):
+        """Loss reconstruction"""
+        reconstruction_loss = keras.losses.binary_crossentropy(model_input,
+                                                               outputs)
+        reconstruction_loss *= input_dims
+        exp = keras.backend.exp(z_log_sigma)
+        kl_loss = 1 + z_log_sigma - keras.backend.square(z_mean) - exp
+        kl_loss = keras.backend.sum(kl_loss, axis=-1)
+        kl_loss *= -0.5
+        return keras.backend.mean(reconstruction_loss + kl_loss)
 
-    encoder_output_layer = keras.layers.Dense(units=latent_dims,
-                                              activation='relu')
-    encoder_outputs = encoder_output_layer(encoder_value)
-    encoder = keras.Model(inputs=encoder_inputs, outputs=encoder_outputs)
-
-    # decoder
-    decoder_inputs = keras.Input(shape=(latent_dims,))
-    decoder_value = decoder_inputs
-    for i in range(len(hidden_layers) - 1, -1, -1):
-        decoder_layer = keras.layers.Dense(units=hidden_layers[i],
-                                           activation='relu')
-        decoder_value = decoder_layer(decoder_value)
-    decoder_output_layer = keras.layers.Dense(units=input_dims,
-                                              activation='sigmoid')
-    decoder_outputs = decoder_output_layer(decoder_value)
-    decoder = keras.Model(inputs=decoder_inputs, outputs=decoder_outputs)
-
-    # autoencoder
-    inputs = encoder_inputs
-    auto = keras.Model(inputs=inputs, outputs=decoder(encoder(inputs)))
-    auto.compile(optimizer='adam',
-                 loss='binary_crossentropy')
-
-    return encoder, decoder, auto
+    """Encoder"""
+    model_input = keras.layers.Input(shape=(input_dims,))
+    encoded = model_input
+    for layer in hidden_layers:
+        encoded = keras.layers.Dense(layer, activation='relu')(encoded)
+    z_mean = keras.layers.Dense(latent_dims)(encoded)
+    z_log_sigma = keras.layers.Dense(latent_dims)(encoded)
+    z = keras.layers.Lambda(sampling)([z_mean, z_log_sigma])
+    encoder = keras.Model(model_input, [z, z_mean, z_log_sigma])
+    """Decoder"""
+    decoded = keras.layers.Input(shape=(latent_dims,))
+    input_d = decoded
+    for layer in reversed(hidden_layers):
+        decoded = keras.layers.Dense(layer,  activation='relu')(decoded)
+    decoded = keras.layers.Dense(input_dims, activation='sigmoid')(decoded)
+    decoder = keras.models.Model(input_d, decoded)
+    """auto"""
+    outputs = decoder(encoder(model_input))
+    auto = keras.models.Model(model_input, outputs)
+    auto.compile(optimizer='adam', loss=kl_reconstruction_loss)
+    return (encoder, decoder, auto)
